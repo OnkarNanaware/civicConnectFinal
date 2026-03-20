@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -9,6 +9,20 @@ export default function Login() {
   const [message, setMessage] = useState("");
   const router = useRouter();
 
+  useEffect(() => {
+    // If user is already logged in, redirect them away from the login page
+    const role = localStorage.getItem("role");
+    if (role) {
+      if (role === "corporator") {
+        router.push("/admin");
+      } else if (role === "superadmin") {
+        router.push("/superadmin");
+      } else {
+        router.push("/user");
+      }
+    }
+  }, [router]);
+
   async function handleSubmit(e) {
     e.preventDefault();
     console.log(username);
@@ -16,6 +30,8 @@ export default function Login() {
 
     if (username == "superadmin@gmail.com" && password == "superadmin") {
       localStorage.setItem("name", "superadmin");
+      localStorage.setItem("role", "superadmin");
+      localStorage.setItem("username", "superadmin@gmail.com");
 
       router.push("/superadmin");
     } else {
@@ -55,7 +71,13 @@ export default function Login() {
       } else if (role === "superadmin") {
         router.push("/superadmin");
       } else {
-        router.push("/user");
+        // If they came from clicking 'Register Complaint' on hero
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("redirect") === "complaints") {
+          router.push("/user/complaints");
+        } else {
+          router.push("/user");
+        }
       }
     }
   }

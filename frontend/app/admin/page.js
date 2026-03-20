@@ -7,6 +7,7 @@ export default function AdminDashboard() {
   const [complaints, setComplaints] = useState([]);
   const [stats, setStats] = useState({ total: 0, pending: 0, resolved: 0 });
   const [loading, setLoading] = useState(true);
+  const [selectedComplaint, setSelectedComplaint] = useState(null); // Added state for Modal
   const router = useRouter();
 
   useEffect(() => {
@@ -119,7 +120,13 @@ export default function AdminDashboard() {
                       {c.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 flex flex-col md:flex-row gap-2">
+                    <button 
+                      onClick={() => setSelectedComplaint(c)}
+                      className="text-white bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-xs transition"
+                    >
+                      View Details
+                    </button>
                     <button 
                       onClick={() => updateStatus(c.id, 'resolved')}
                       className="text-white bg-green-500 hover:bg-green-600 px-3 py-1 rounded text-xs transition"
@@ -132,6 +139,61 @@ export default function AdminDashboard() {
             </tbody>
           </table>
         </div>
+
+        {/* --- Complaint Details Modal --- */}
+        {selectedComplaint && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-50 overflow-y-auto">
+            <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-2xl relative my-8">
+              <button 
+                onClick={() => setSelectedComplaint(null)}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl font-bold leading-none"
+              >
+                &times;
+              </button>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">Complaint Details</h2>
+              <div className="space-y-4 text-gray-700">
+                <div className="grid grid-cols-2 gap-4 border-b pb-4">
+                  <p><span className="font-semibold text-gray-900">Category:</span> {selectedComplaint.category}</p>
+                  <p><span className="font-semibold text-gray-900">Date:</span> {selectedComplaint.date}</p>
+                  <p><span className="font-semibold text-gray-900">Status:</span> <span className={`capitalize ${selectedComplaint.status === 'resolved' ? 'text-green-600' : 'text-yellow-600'} font-bold`}>{selectedComplaint.status}</span></p>
+                  <p><span className="font-semibold text-gray-900">Raised By ID:</span> {selectedComplaint.raisedby}</p>
+                  <p><span className="font-semibold text-gray-900">Severity:</span> <span className={`ml-1 px-2 py-0.5 rounded text-xs font-bold ${
+                      selectedComplaint.severity === 'High' ? 'bg-red-100 text-red-700' : 
+                      selectedComplaint.severity === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 
+                      'bg-green-100 text-green-700'
+                    }`}>{selectedComplaint.severity || 'Medium'}</span></p>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">AI Summary</h3>
+                  <p className="bg-gray-50 p-3 rounded border border-gray-100">{selectedComplaint.summary}</p>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mt-4 mb-1">Full Description</h3>
+                  <p className="bg-gray-50 p-4 rounded border border-gray-200 whitespace-pre-wrap">{selectedComplaint.complaint}</p>
+                </div>
+              </div>
+              <div className="mt-8 flex justify-end gap-3 border-t pt-4">
+                <button 
+                  onClick={() => setSelectedComplaint(null)}
+                  className="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+                >
+                  Close
+                </button>
+                {selectedComplaint.status !== 'resolved' && (
+                  <button 
+                    onClick={() => {
+                      updateStatus(selectedComplaint.id, 'resolved');
+                      setSelectedComplaint(null);
+                    }}
+                    className="px-5 py-2 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-lg transition"
+                  >
+                    Mark as Resolved
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

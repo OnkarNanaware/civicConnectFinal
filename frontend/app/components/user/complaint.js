@@ -32,9 +32,9 @@ const Complaint = ({
     setUsername(localStorage.getItem("name").split(" ")[0]);
   }, []);
   return (
-    <div className="p-10">
-      <div className="w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-        <ul className="flex flex-wrap text  -sm font-medium text-center text-gray-500 border-b border-gray-200 rounded-t-lg bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
+    <div className="p-10 pb-2">
+      <div className="w-full bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 dark:bg-gray-800 dark:border-gray-700">
+        <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 rounded-t-xl bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
           <li className="me-2">
             <p
               id="about-tab"

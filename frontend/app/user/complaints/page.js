@@ -5,18 +5,28 @@ import Link from "next/link";
 import Complaint from "../../components/user/complaint.js";
 import { useEffect } from "react";
 export default function Page() {
-  const [complaints, setComplaints] = useState();
+  const [complaints, setComplaints] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     getComplaints();
   }, []);
   const getComplaints = async () => {
-    const response = await fetch("/api/complaint", {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
-    const data = await response.json();
-    console.log(data.complaints);
-    setComplaints(() => data.complaints);
+    try {
+      setLoading(true);
+      const response = await fetch("/api/complaint", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setComplaints(data.complaints || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch complaints:", error);
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <div>
@@ -49,9 +59,14 @@ export default function Page() {
           </div>
         </div>
       </div>
-      {complaints
-        ? complaints.map((complaint) => (
+      
+      <div className="container mx-auto px-8 py-6">
+        {loading ? (
+          <div className="text-center py-20 text-gray-500 font-medium">Loading complaints...</div>
+        ) : complaints.length > 0 ? (
+          complaints.map((complaint) => (
             <Complaint
+              key={complaint.id}
               title={complaint.summary}
               description={complaint.complaint}
               raisedBy={complaint.raisedby}
@@ -60,7 +75,13 @@ export default function Page() {
               date={complaint.date}
             />
           ))
-        : null}
+        ) : (
+          <div className="text-center py-20 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+            <h3 className="text-lg font-medium text-gray-700">No complaints found</h3>
+            <p className="text-gray-500 mt-2">You haven't registered any complaints yet.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

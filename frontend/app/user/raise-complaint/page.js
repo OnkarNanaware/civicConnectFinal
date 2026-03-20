@@ -10,6 +10,7 @@ export default function Page() {
   const [description, setDescription] = useState("");
   const [wardno, setWardno] = useState("");
   const [userId, setUserId] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const id = localStorage.getItem("id");
@@ -25,6 +26,7 @@ export default function Page() {
       alert("Please fill in all fields");
       return;
     }
+    setIsSubmitting(true);
     try {
       const response = await fetch("/api/complaint", {
         method: "POST",
@@ -42,7 +44,7 @@ export default function Page() {
         // Clear form fields after successful submission if needed
         setDescription("");
         setWardno("");
-        router.push("/");
+        router.push("/user/complaints");
       } else {
         // Display error message if request failed
         alert("Failed to submit complaint");
@@ -50,6 +52,8 @@ export default function Page() {
     } catch (error) {
       console.error("Error submitting complaint:", error);
       alert("Failed to submit complaint");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -76,14 +80,14 @@ export default function Page() {
                     onChange={(e) => setDescription(e.target.value)}
                     name="description"
                     id="description"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 h-40 resize-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Enter description"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-3 h-40 resize-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm"
+                    placeholder="Describe your issue in detail (e.g., Pothole on main street, water leakage)..."
                     required
                   />
                 </div>
                 <div>
                   <label
-                    htmlFor="description"
+                    htmlFor="wardno"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
                     Ward no
@@ -94,8 +98,8 @@ export default function Page() {
                     type="text"
                     name="wardno"
                     id="wardno"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 h-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Enter ward no"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-3 h-11 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm"
+                    placeholder="Enter Ward Number (e.g., 42)"
                     required
                   />
                 </div>
@@ -103,9 +107,10 @@ export default function Page() {
                   <button
                     type="button"
                     onClick={handleSubmit}
-                    className="text-white bg-blue-600  hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    disabled={isSubmitting}
+                    className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-8 py-3 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:opacity-50 transition-all"
                   >
-                    Submit Complaint
+                    {isSubmitting ? "Submitting..." : "Submit Complaint"}
                   </button>
                 </div>
               </div>

@@ -78,10 +78,28 @@ export const POST = async (req, res) => {
         }
     }
 
-    const summary = aiData.summary_short;
-    const category = aiData.department;
-    const severity = aiData.severity;
-    const priority = aiData.priority_score;
+    const summary = aiData.summary_short || complaint.substring(0, 50);
+    let category = aiData.department || "Other";
+    
+    // Fallback normalization logic
+    const allowedCategories = ["Water", "Electricity", "Road", "Garbage"];
+    if (!allowedCategories.includes(category)) {
+       // Check if response contains hints of garbage or sanitation
+       if (/sanitation|garbage|waste/i.test(category) || /sanitation|garbage|waste/i.test(complaint)) {
+         category = "Garbage";
+       } else if (/road|pothole/i.test(category) || /road|pothole/i.test(complaint)) {
+         category = "Road";
+       } else if (/electricity|power/i.test(category) || /electricity|power/i.test(complaint)) {
+         category = "Electricity";
+       } else if (/water|pipe/i.test(category) || /water|pipe/i.test(complaint)) {
+         category = "Water";
+       } else {
+         category = "Other";
+       }
+    }
+
+    const severity = aiData.severity || "Medium";
+    const priority = aiData.priority_score || 5;
     const tags = "AI-Analyzed";
 
     console.log("Saving enriched complaint:", { raisedBy, summary, category, severity, priority });

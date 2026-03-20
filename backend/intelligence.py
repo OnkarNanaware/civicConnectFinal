@@ -20,13 +20,14 @@ def analyze_complaint(text):
     Analyze the following civic complaint and provide a structured JSON response.
     Complaint: "{text}"
     
-    Return JSON format:
+    Return JSON format exactly like this:
     {{
       "severity": "High/Medium/Low",
       "priority_score": 1-10,
-      "department": "Water/Electricity/Roads/Sanitation/Health/Other",
+      "department": "Water/Electricity/Road/Garbage/Other",
       "summary_short": "5 word summary"
     }}
+    IMPORTANT: 'department' MUST be exactly one of: Water, Electricity, Road, Garbage, Other. Use Garbage for sanitation/waste issues.
     """
     
     try:

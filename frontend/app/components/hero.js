@@ -22,22 +22,31 @@ const Hero = () => {
   useEffect(() => {
     const uname = localStorage.getItem("username");
     console.log(uname);
-    if (uname !== undefined) {
+    if (uname) {
       setUsername(() => uname);
-      setIsLoggedIn(false);
+      setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);
     }
   }, []);
 
   function handleRegisterComplaint() {
-    const username = localStorage.getItem("username");
-
-    console.log(isLoggedIn, username, "adashgdjgasjdgjasgdj");
-    if (isLoggedIn) {
-      router.push("/raise-complaint");
+    const isAuth = !!localStorage.getItem("username");
+    const role = localStorage.getItem("role");
+    
+    console.log(isAuth, localStorage.getItem("username"), "Auth state check");
+    if (isAuth) {
+      if (role === "user") {
+        router.push("/user/complaints");
+      } else if (role === "corporator") {
+        router.push("/admin");
+      } else if (role === "superadmin") {
+        router.push("/superadmin");
+      } else {
+        router.push("/user/complaints");
+      }
     } else {
-      router.push("/login");
+      router.push("/login?redirect=complaints");
     }
   }
   return (

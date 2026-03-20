@@ -10,11 +10,27 @@ import { useRouter } from "next/navigation";
 const Navbar = () => {
   const router = useRouter();
   const [username, setUsername] = useState();
+  const [role, setRole] = useState("");
 
-  const navigation = ["Home", "Complaints", "Water", "Electricity", "About Us", "Contact Us"];
+  const navigation = [
+    "Home",
+    role !== "corporator" ? "Complaints" : null,
+    "Water",
+    "Electricity",
+    "About Us",
+    "Contact Us"
+  ].filter(Boolean);
+
   useEffect(() => {
-    if (typeof window !== "undefined" && localStorage.getItem("name")) {
-      setUsername(localStorage.getItem("name").split(" ")[0]);
+    if (typeof window !== "undefined") {
+      const name = localStorage.getItem("name");
+      const userRole = localStorage.getItem("role");
+      if (name) {
+        setUsername(name.split(" ")[0]);
+      }
+      if (userRole) {
+        setRole(userRole);
+      }
     }
   }, []);
   return (

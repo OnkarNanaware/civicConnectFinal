@@ -10,21 +10,26 @@ import { useRouter } from "next/navigation";
 const Navbar = () => {
   const router = useRouter();
   const [username, setUsername] = useState();
+  const [role, setRole] = useState("");
 
   // constaints name and link
   const navigation = [
     "Home",
-    "Complaints",
+    role !== "corporator" ? "Complaints" : null,
     "Electricity",
     "Water",
     "About Us",
     "Contact",
-  ];
+  ].filter(Boolean);
 
   useEffect(() => {
     const name = localStorage.getItem("name");
+    const userRole = localStorage.getItem("role");
     if (name) {
       setUsername(name.split(" ")[0]);
+    }
+    if (userRole) {
+      setRole(userRole);
     }
   }, []);
   return (
@@ -91,6 +96,20 @@ const Navbar = () => {
                       </Link>
                     ))}
                   </>
+                  <div className="flex flex-col mt-4 border-t pt-4">
+                    <p className="text-gray-900 dark:text-white mb-4">Welcome {username}!</p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        localStorage.removeItem("name");
+                        localStorage.removeItem("role");
+                        router.push("/");
+                      }}
+                      className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    >
+                      Logout
+                    </button>
+                  </div>
                 </Disclosure.Panel>
               </div>
             </>
@@ -125,16 +144,17 @@ const Navbar = () => {
           </ul>
         </div>
 
-        <div className="hidden mr-3 space-x-4 lg:flex nav__item">
-          <div className="flex items-center space-x-4">
-            <p className="text-gray-900 dark:text-white">Welcome {username}!</p>
+        <div className="hidden mr-3 space-x-2 lg:flex nav__item items-center whitespace-nowrap">
+          <div className="flex items-center space-x-3">
+            <p className="text-gray-900 dark:text-white text-sm">Welcome {username}!</p>
             <button
               type="button"
               onClick={() => {
                 localStorage.removeItem("name");
+                localStorage.removeItem("role");
                 router.push("/");
               }}
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             >
               Logout
             </button>
