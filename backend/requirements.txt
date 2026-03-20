@@ -1,0 +1,10 @@
+Flask
+Flask-Cors
+google-generativeai
+python-dotenv
+langchain<0.3
+langchain-community<0.3
+langchain-core<0.3
+langchain-google-genai<2.0
+pandas
+scikit-learn
